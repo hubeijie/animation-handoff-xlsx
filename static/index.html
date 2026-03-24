@@ -648,14 +648,6 @@
           <h2 class="card-kicker" id="guide-h"><span class="kicker-emoji" aria-hidden="true">✨</span> 使用指南</h2>
           <div class="guide-bits">
             <div class="guide-bit">
-              <span class="bit-tag">公网 · 静态托管</span>
-              <p>若本页来自 <strong>GitHub Pages</strong>（地址含 <code>github.io</code>），生成 .xlsx 仍需要一台已部署的 <strong>FastAPI 后端</strong>（与仓库内 <code>Dockerfile</code> 相同）。在下方填写后端<strong>根地址</strong>（不要末尾 <code>/</code>），例如 <code>https://xxx.onrender.com</code>，会保存在本浏览器。也可在网址后加 <code>?api=https://你的后端</code> 一次生效。</p>
-              <div class="field" style="margin-top:0.5rem;margin-bottom:0">
-                <label for="handoff_api_base">工坊 API 根地址（静态托管时必填）</label>
-                <input type="url" id="handoff_api_base" placeholder="https://你的服务.onrender.com" autocomplete="off" />
-              </div>
-            </div>
-            <div class="guide-bit">
               <span class="bit-tag">方式一 · 工坊</span>
               <p>默认在<strong>浏览器内直连</strong> OpenAI 兼容接口。布局为三列：<strong>左侧</strong>本说明，<strong>中间</strong>上为 API、下为统筹表头（选填），<strong>右侧</strong>上传已定稿脚本并导出。</p>
               <p>工坊主要读取脚本单元格的<strong>文字描述</strong>。若统筹表需要内嵌配图，请用方式二在 Cursor 中配合技能导出配图列。</p>
@@ -1193,7 +1185,7 @@
       hideMsgs();
       if (/\.github\.io$/i.test(location.hostname) && !getHandoffApiBase()) {
         showErr(
-          '当前为 GitHub Pages 静态页：请先在左侧「公网 · 静态托管」填写工坊 API 根地址（已部署的 FastAPI），或在网址后加 ?api=https://你的后端',
+          '当前为 GitHub Pages 静态页：请在网址后加 ?api=https://你的后端（已部署的 FastAPI 根地址），或在页面源码 meta handoff-api-base 中配置。',
         );
         return;
       }
