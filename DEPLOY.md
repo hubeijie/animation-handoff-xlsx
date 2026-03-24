@@ -34,3 +34,17 @@ git push -u origin main
 
 - 免费 Web Service 一段时间无访问会休眠，**第一次打开可能较慢**。
 - 私有 GitHub 仓库在 Render 上通常**不能**用 `free` 计划，需改 `render.yaml` 里的 `plan` 或在控制台选付费档，或将仓库设为 Public。
+
+---
+
+## 5. GitHub Pages + 后端「拆站」（他人可打开页面，导出走后端）
+
+适合：**不想给 Render 绑卡**或希望访问入口在 `github.io`。
+
+1. 按上文把 **FastAPI** 部署到任意公网地址，记为 `https://你的后端`（须为启用 CORS 的当前版本，见 `app/main.py`）。
+2. 本仓库 **Settings → Pages**：Branch **`main`**，目录 **`/docs`**。
+3. 访客打开：`https://<用户>.github.io/<仓库名>/`（会自动进 **`workshop.html`**）。
+4. 在工坊左侧 **「工坊 API 根地址」** 填入 `https://你的后端`（勿带末尾 `/`），或分享带参链接：  
+   `https://<用户>.github.io/<仓库名>/workshop.html?api=https://你的后端`
+
+说明：静态页与 API **域名不同**时依赖浏览器跨域；当前后端默认 `Access-Control-Allow-Origin: *`。

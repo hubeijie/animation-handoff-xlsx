@@ -23,6 +23,7 @@ from pathlib import Path
 
 import httpx
 from fastapi import BackgroundTasks, Body, FastAPI, File, Form, HTTPException, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from openpyxl import load_workbook
@@ -282,6 +283,15 @@ def run_generator(data: dict, out_path: Path) -> None:
 app = FastAPI(
     title="美术统筹表工坊",
     description="脚本 Excel 整理导出为美术统筹表 .xlsx",
+)
+
+# 允许 GitHub Pages 等静态站点跨域调用 /api/*（可按需改为环境变量白名单）
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 if STATIC_DIR.is_dir():

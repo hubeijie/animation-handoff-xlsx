@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>美术统筹表工坊 · 部署说明</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&family=Noto+Sans+SC:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --text: #2e3a45;
+      --muted: #5c6b78;
+      --blue-900: #354a5c;
+      --blue-700: #4a6578;
+      --card: rgba(255, 255, 255, 0.94);
+      --border: rgba(74, 101, 120, 0.22);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Noto Sans SC", "Nunito", system-ui, sans-serif;
+      color: var(--text);
+      line-height: 1.6;
+      background-color: #f7fbfe;
+      padding: 2rem 1.25rem 3rem;
+    }
+    .wrap { max-width: 40rem; margin: 0 auto; }
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 1.5rem 1.35rem 1.6rem;
+      box-shadow: 0 8px 28px rgba(45, 70, 88, 0.08);
+    }
+    h1 {
+      font-family: "Nunito", "Noto Sans SC", sans-serif;
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--blue-900);
+      margin: 0 0 0.5rem;
+    }
+    .lead { color: var(--muted); margin: 0 0 1.25rem; font-size: 0.95rem; }
+    h2 { font-size: 1.05rem; font-weight: 800; color: var(--blue-900); margin: 1.35rem 0 0.65rem; }
+    ol { margin: 0; padding-left: 1.2rem; }
+    li { margin: 0.45rem 0; }
+    code, .cmd {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.84em;
+      background: rgba(74, 101, 120, 0.08);
+      padding: 0.12rem 0.35rem;
+      border-radius: 6px;
+    }
+    .cmd {
+      display: block;
+      padding: 0.65rem 0.8rem;
+      margin: 0.5rem 0;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    a { color: var(--blue-700); font-weight: 600; }
+    .foot { margin-top: 1.5rem; font-size: 0.85rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>🗒️ 美术统筹表工坊 · 部署说明</h1>
+      <p class="lead"><a href="workshop.html">进入完整工坊界面 →</a></p>
+      <p class="lead">GitHub Pages 只托管静态前端；生成 .xlsx 需另部署 FastAPI（见仓库 <code>Dockerfile</code>、<code>DEPLOY.md</code>）。在前端填写或使用 <code>?api=</code> 指向该后端地址。</p>
+      <h2>在本机跑全套（前后端一体）</h2>
+      <span class="cmd">cd animation-handoff-web
+python3 -m pip install -r requirements.txt
+./start.sh</span>
+      <p class="lead" style="margin-bottom:0">浏览器打开 <code>http://127.0.0.1:8765</code>（无需填写 API 根地址）。</p>
+      <p class="foot">Pages：Settings → Pages → Branch <strong>main</strong>，文件夹 <strong>/docs</strong>。</p>
+    </div>
+  </div>
+</body>
+</html>
