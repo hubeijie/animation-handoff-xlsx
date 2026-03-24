@@ -1,0 +1,16 @@
+# Render Blueprint：Dashboard → New → Blueprint → 选含本文件的仓库
+# 私有仓库无法使用 free 档，请改用 starter 或把仓库设为 Public
+services:
+  - type: web
+    name: art-handoff-workshop
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /
+    plan: free
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      # 勾选「服务端调用模型」时在 Render 控制台再加：OPENAI_API_KEY、OPENAI_BASE_URL、OPENAI_MODEL
+      # 仅测生成链路可临时设为 "1"
+      # - key: DRY_RUN
+      #   value: "1"

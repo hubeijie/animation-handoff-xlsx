@@ -3,8 +3,6 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- 可选：构建 GitHub Pages 时填入已部署的 FastAPI 根地址，例如 https://xxx.onrender.com -->
-  <meta name="handoff-api-base" content="" />
   <title>美术统筹表工坊</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -787,59 +785,6 @@
     const msgErr = $('msgErr');
     const msgOk = $('msgOk');
 
-    const HANDOFF_API_LS = 'handoff_api_base';
-    function handoffApiBaseFromQuery() {
-      try {
-        const q = new URLSearchParams(window.location.search).get('api');
-        if (!q) return '';
-        return decodeURIComponent(q).trim().replace(/\/$/, '');
-      } catch (_) {
-        return '';
-      }
-    }
-    function handoffApiBaseFromMeta() {
-      const m = document.querySelector('meta[name="handoff-api-base"]');
-      return ((m && m.getAttribute('content')) || '').trim().replace(/\/$/, '');
-    }
-    function handoffApiBaseFromStorage() {
-      try {
-        return (localStorage.getItem(HANDOFF_API_LS) || '').trim().replace(/\/$/, '');
-      } catch (_) {
-        return '';
-      }
-    }
-    function getHandoffApiBase() {
-      const q = handoffApiBaseFromQuery();
-      if (q) return q;
-      const meta = handoffApiBaseFromMeta();
-      if (meta) return meta;
-      const el = $('handoff_api_base');
-      const v = ((el && el.value) || '').trim().replace(/\/$/, '');
-      if (v) return v;
-      return handoffApiBaseFromStorage();
-    }
-    function apiUrl(path) {
-      const p = path.startsWith('/') ? path : `/${path}`;
-      const base = getHandoffApiBase();
-      if (!base) return p;
-      return `${base}${p}`;
-    }
-    (function initHandoffApiBaseInput() {
-      const el = $('handoff_api_base');
-      if (!el) return;
-      if (!el.value.trim()) {
-        const s = handoffApiBaseFromStorage();
-        if (s) el.value = s;
-      }
-      el.addEventListener('change', () => {
-        try {
-          const v = el.value.trim().replace(/\/$/, '');
-          if (v) localStorage.setItem(HANDOFF_API_LS, v);
-          else localStorage.removeItem(HANDOFF_API_LS);
-        } catch (_) {}
-      });
-    })();
-
     const LLM_PRESETS = {
       gemini: {
         base: 'https://generativelanguage.googleapis.com/v1beta/openai',
@@ -1183,12 +1128,6 @@
 
     go.addEventListener('click', async () => {
       hideMsgs();
-      if (/\.github\.io$/i.test(location.hostname) && !getHandoffApiBase()) {
-        showErr(
-          '当前为 GitHub Pages 静态页：请在网址后加 ?api=https://你的后端（已部署的 FastAPI 根地址），或在页面源码 meta handoff-api-base 中配置。',
-        );
-        return;
-      }
       if (!f.files?.length) {
         showErr('请先选择或拖入 Excel 文件');
         return;
@@ -1209,7 +1148,7 @@
           fd.append('color_ref', $('color_ref').value.trim());
           fd.append('sheet_name', sheetName);
           fd.append('max_rows', String(maxRows));
-          const res = await fetch(apiUrl('/api/convert'), { method: 'POST', body: fd });
+          const res = await fetch('/api/convert', { method: 'POST', body: fd });
           await downloadFromResponse(res);
           return;
         }
@@ -1236,7 +1175,7 @@
         const scriptText = workbookToScriptText(workbook, maxRows, sheetName);
 
         progText.textContent = '正在获取提示词…';
-        const pr = await fetch(apiUrl('/api/handoff-system-prompt'));
+        const pr = await fetch('/api/handoff-system-prompt');
         if (!pr.ok) throw new Error('无法拉取 /api/handoff-system-prompt');
         const { prompt: systemPrompt } = await pr.json();
 
@@ -1296,7 +1235,7 @@
 
         progText.textContent = '正在生成 .xlsx…';
         const stem = f.files[0].name.replace(/\.(xlsx|xlsm)$/i, '');
-        const buildRes = await fetch(apiUrl('/api/build-xlsx'), {
+        const buildRes = await fetch('/api/build-xlsx', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ data: handoff, filename_stem: stem }),
