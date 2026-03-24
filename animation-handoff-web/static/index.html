@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>美术统筹表工坊</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      /* 低饱和蓝灰主色，避免荧光 */
+      --blue-950: #2a3d4d;
+      --blue-900: #354a5c;
+      --blue-800: #3d5669;
+      --blue-700: #4a6578;
+      --blue-600: #5c7588;
+      --blue-500: #6d8496;
+      --blue-400: #8a9dad;
+      --blue-200: #c5d0da;
+      --blue-100: #dde5ec;
+      --blue-50: #eef2f6;
+      --text: #2e3a45;
+      --muted: #5c6b78;
+      --accent: #4d6f86;
+      --accent-soft: rgba(77, 111, 134, .18);
+      --code-bg: rgba(255, 255, 255, .88);
+      --card-bg: rgba(255, 255, 255, .9);
+      --radius: 18px;
+      --radius-sm: 12px;
+      font-family: "Noto Sans SC", "Nunito", system-ui, sans-serif;
+      color: var(--text);
+      line-height: 1.55;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background-color: #f7fbfe;
+      position: relative;
+    }
+    /* 蓝白波点：白底 + 错位浅蓝圆点 */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-color: transparent;
+      background-image:
+        radial-gradient(circle, rgba(74, 101, 120, 0.22) 2.4px, transparent 2.5px),
+        radial-gradient(circle, rgba(74, 101, 120, 0.22) 2.4px, transparent 2.5px);
+      background-size: 34px 34px, 34px 34px;
+      background-position: 0 0, 17px 17px;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      padding: 1.5rem 0 2.75rem;
+    }
+    .wrap {
+      max-width: 80rem;
+      margin: 0 auto;
+      padding: 0 clamp(1.1rem, 3.4vw, 1.55rem);
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .site-head {
+      margin-bottom: 1.5rem;
+      padding: 1.25rem 1.35rem 1.3rem;
+      border-radius: var(--radius);
+      background: linear-gradient(
+        122deg,
+        rgba(255, 255, 255, 0.86) 0%,
+        rgba(228, 243, 252, 0.94) 38%,
+        rgba(218, 236, 248, 0.9) 68%,
+        rgba(230, 240, 248, 0.88) 100%
+      );
+      border: 1px solid rgba(95, 138, 168, 0.24);
+      box-shadow: 0 10px 40px rgba(55, 95, 122, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.75);
+      position: relative;
+      overflow: hidden;
+    }
+    .site-head::before {
+      content: "";
+      position: absolute;
+      top: -42%;
+      right: -18%;
+      width: min(24rem, 85vw);
+      height: min(24rem, 85vw);
+      border-radius: 50%;
+      background: radial-gradient(
+        circle,
+        rgba(160, 208, 235, 0.42) 0%,
+        rgba(200, 230, 245, 0.14) 48%,
+        transparent 70%
+      );
+      pointer-events: none;
+    }
+    .site-head::after {
+      content: "";
+      position: absolute;
+      bottom: -35%;
+      left: -12%;
+      width: 14rem;
+      height: 14rem;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 214, 188, 0.28) 0%, transparent 68%);
+      pointer-events: none;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      position: relative;
+      z-index: 1;
+    }
+    .logo {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 14px;
+      background: linear-gradient(150deg, #fff 0%, #e2f0f8 100%);
+      border: 1px solid rgba(90, 130, 158, 0.32);
+      display: grid;
+      place-items: center;
+      font-size: 1.45rem;
+      line-height: 1;
+      box-shadow: 0 3px 14px rgba(60, 100, 130, 0.12);
+    }
+    h1 {
+      font-family: "Nunito", "Noto Sans SC", sans-serif;
+      font-size: clamp(1.35rem, 2.5vw, 1.6rem);
+      font-weight: 800;
+      margin: 0;
+      letter-spacing: -0.02em;
+      color: var(--blue-900);
+    }
+    .tagline {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin: 0.5rem 0 0;
+      line-height: 1.6;
+      max-width: 48rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* 工作台：左指南 | 中上 API + 中下表头 | 右脚本上传 */
+    .workbench-grid {
+      display: grid;
+      gap: 1.15rem;
+      align-items: start;
+      grid-template-columns: 1fr;
+      width: 100%;
+      max-width: 80rem;
+      margin-left: auto;
+      margin-right: auto;
+      box-sizing: border-box;
+      padding-left: max(clamp(1.1rem, 3.4vw, 1.55rem), env(safe-area-inset-left, 0px));
+      padding-right: max(clamp(1.1rem, 3.4vw, 1.55rem), env(safe-area-inset-right, 0px));
+    }
+    @media (min-width: 960px) {
+      .workbench-grid {
+        align-items: start;
+        grid-template-columns:
+          minmax(14rem, 17.5rem)
+          minmax(0, 1.24fr)
+          minmax(0, 0.76fr);
+        gap: 1rem 1.25rem;
+      }
+    }
+    .col-mid-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      min-width: 0;
+    }
+    .upload-hero-lead {
+      margin: 0 0 1rem;
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .upload-hero-body {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: 100%;
+    }
+    .upload-hero-side {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      width: 100%;
+    }
+    .upload-hero-side .actions {
+      margin-top: 0;
+      flex-direction: column;
+      align-items: stretch;
+      width: 100%;
+    }
+    .upload-hero-side .primary {
+      width: 100%;
+      max-width: none;
+      text-align: center;
+      padding: 0.8rem 1.25rem;
+      font-size: 1rem;
+      border-radius: var(--radius-sm);
+    }
+    .drop.drop--hero {
+      width: 100%;
+      box-sizing: border-box;
+      min-height: 9.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.85rem 1.5rem;
+    }
+
+    .bubble-card {
+      border-radius: var(--radius);
+      padding: 1.15rem 1.2rem 1.3rem;
+      position: relative;
+      background: var(--card-bg);
+      border: 1px solid rgba(74, 101, 120, 0.22);
+      box-shadow: 0 8px 30px rgba(45, 70, 88, 0.06);
+      backdrop-filter: blur(6px);
+    }
+    .bubble-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+    }
+
+    .card-mint {
+      border-left: 3px solid rgba(92, 117, 136, 0.55);
+    }
+
+    /* 浏览器 API：冷灰蓝 */
+    .bubble-card.card-peach {
+      background: linear-gradient(
+        165deg,
+        rgba(238, 244, 250, 0.98) 0%,
+        rgba(224, 234, 244, 0.93) 100%
+      );
+      border-color: rgba(90, 118, 148, 0.32);
+      border-left-width: 4px;
+      border-left-color: rgb(88, 118, 148);
+      box-shadow: 0 8px 28px rgba(55, 85, 115, 0.08);
+    }
+
+    /* 统筹表表头：浅白钢青（与右侧上传块拉开明度差） */
+    .bubble-card.card-sky {
+      background: linear-gradient(
+        165deg,
+        rgba(252, 253, 255, 0.99) 0%,
+        rgba(236, 244, 249, 0.96) 100%
+      );
+      border-color: rgba(78, 118, 145, 0.28);
+      border-left-width: 4px;
+      border-left-color: rgb(88, 122, 148);
+      box-shadow: 0 8px 26px rgba(50, 95, 118, 0.06);
+    }
+
+    /* 脚本上传：中等浅蓝（介于前版偏深与偏淡之间） */
+    .bubble-card.card-upload-hero {
+      background: linear-gradient(
+        165deg,
+        rgba(234, 244, 250, 0.99) 0%,
+        rgba(214, 232, 244, 0.96) 100%
+      );
+      border-color: rgba(68, 102, 132, 0.34);
+      border-left-width: 4px;
+      border-left-color: rgb(70, 104, 134);
+      box-shadow: 0 10px 32px rgba(42, 72, 98, 0.1);
+    }
+    @media (min-width: 960px) {
+      .bubble-card.card-upload-hero {
+        min-height: calc(100dvh - 12.5rem);
+        display: flex;
+        flex-direction: column;
+      }
+      .bubble-card.card-upload-hero > .card-kicker {
+        flex-shrink: 0;
+      }
+      .bubble-card.card-upload-hero .upload-hero-lead {
+        flex-shrink: 0;
+      }
+      .bubble-card.card-upload-hero .upload-hero-body {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .bubble-card.card-upload-hero .drop.drop--hero {
+        flex: 1;
+        min-height: 7rem;
+      }
+      .bubble-card.card-upload-hero .upload-hero-side {
+        flex-shrink: 0;
+      }
+    }
+
+    .card-kicker {
+      margin: 0 0 0.75rem;
+      font-family: "Nunito", "Noto Sans SC", sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--blue-900);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+    .kicker-emoji { font-size: 1.1rem; line-height: 1; opacity: 0.88; }
+    .card-kicker .muted {
+      font-weight: 600;
+      font-size: 0.78rem;
+      color: var(--blue-500);
+      text-transform: none;
+    }
+
+    .guide-bits {
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+    .guide-bit {
+      padding: 0.7rem 0.8rem;
+      border-radius: var(--radius-sm);
+      background: rgba(238, 242, 246, 0.65);
+      border: 1px solid rgba(74, 101, 120, 0.14);
+      font-size: 0.8125rem;
+      line-height: 1.65;
+      color: var(--text);
+    }
+    .guide-bit strong { color: var(--blue-800); }
+    .guide-bit p + p {
+      margin-top: 0.55rem;
+    }
+    .bit-tag {
+      display: inline-block;
+      font-family: "Nunito", "Noto Sans SC", sans-serif;
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.16rem 0.48rem;
+      border-radius: 6px;
+      margin-bottom: 0.4rem;
+      background: rgba(197, 208, 218, 0.65);
+      color: var(--blue-800);
+      border: 1px solid rgba(74, 101, 120, 0.12);
+    }
+    .bit-tag.bit-cursor {
+      background: rgba(221, 229, 236, 0.9);
+      color: var(--blue-900);
+    }
+
+    .sec-hint {
+      margin: -0.2rem 0 0.75rem;
+      font-size: 0.8125rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .mini-2col {
+      display: grid;
+      gap: 0.65rem;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 480px) {
+      .mini-2col { grid-template-columns: 1fr 1fr; }
+    }
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+    }
+    input[type="text"],
+    input[type="number"],
+    input[type="url"] {
+      width: 100%;
+      padding: 0.55rem 0.8rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(74, 101, 120, 0.28);
+      background: rgba(255, 255, 255, 0.96);
+      color: var(--text);
+      font-size: 0.9rem;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    input::placeholder { color: var(--blue-400); }
+    input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+    .field { margin-bottom: 0.85rem; }
+    .field:last-child { margin-bottom: 0; }
+    .llm-opt {
+      display: flex;
+      gap: 0.5rem;
+      align-items: flex-start;
+      font-size: 0.82rem;
+      color: var(--muted);
+      cursor: pointer;
+      margin-top: 0.15rem;
+      line-height: 1.55;
+    }
+    .llm-opt input { margin-top: 0.2rem; flex-shrink: 0; accent-color: var(--blue-700); }
+    .llm-opt code { font-size: 0.78em; }
+    .llm-notice {
+      font-size: 0.8rem;
+      line-height: 1.6;
+      color: var(--blue-800);
+      background: rgba(238, 242, 246, 0.85);
+      border: 1px dashed rgba(74, 101, 120, 0.28);
+      border-radius: var(--radius-sm);
+      padding: 0.65rem 0.75rem;
+      margin: 0 0 0.9rem;
+    }
+    .llm-provider-row {
+      display: grid;
+      gap: 0.65rem;
+      grid-template-columns: 1fr;
+      margin-bottom: 0.25rem;
+    }
+    @media (min-width: 480px) {
+      .llm-provider-row { grid-template-columns: 1fr 1fr; }
+    }
+    select.llm-select {
+      width: 100%;
+      padding: 0.55rem 0.8rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(74, 101, 120, 0.28);
+      background: rgba(255, 255, 255, 0.96);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: inherit;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234a6578' d='M3 4.5L6 8l3-3.5'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.65rem center;
+      padding-right: 2rem;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    select.llm-select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+    .drop {
+      border: 1px dashed rgba(74, 101, 120, 0.35);
+      border-radius: var(--radius-sm);
+      padding: 1.35rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.18s, background 0.18s;
+      background: rgba(255, 255, 255, 0.55);
+    }
+    .drop:hover, .drop.focus {
+      border-color: rgba(77, 111, 134, 0.55);
+      background: rgba(238, 242, 246, 0.75);
+    }
+    .card-upload-hero .drop.drop--hero {
+      background: rgba(255, 255, 255, 0.5);
+      border-color: rgba(60, 95, 125, 0.38);
+    }
+    .card-upload-hero .drop.drop--hero:hover,
+    .card-upload-hero .drop.drop--hero.focus {
+      background: rgba(255, 255, 255, 0.72);
+      border-color: rgba(55, 90, 120, 0.48);
+    }
+    .drop p { margin: 0.35rem 0 0; font-size: 0.88rem; color: var(--muted); }
+    .drop .fname {
+      color: var(--blue-800);
+      font-weight: 700;
+      font-size: 0.88rem;
+      word-break: break-all;
+    }
+    .file-input { position: absolute; width: 0; height: 0; opacity: 0; }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      margin-top: 1.1rem;
+    }
+    button.primary {
+      font-family: "Nunito", "Noto Sans SC", sans-serif;
+      font-weight: 700;
+      font-size: 0.92rem;
+      padding: 0.58rem 1.35rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      color: #fff;
+      background: var(--blue-700);
+      box-shadow: 0 4px 16px rgba(45, 70, 88, 0.2);
+      transition: background 0.15s, transform 0.12s, box-shadow 0.15s;
+    }
+    button.primary:hover:not(:disabled) {
+      background: var(--blue-800);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(45, 70, 88, 0.22);
+    }
+    button.primary:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    /* 与「导出下载」同款：实心 slate、白字、胶囊形 */
+    button.secondary {
+      font-family: "Nunito", "Noto Sans SC", sans-serif;
+      font-weight: 700;
+      font-size: 0.92rem;
+      padding: 0.58rem 1.35rem;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      color: #fff;
+      background: var(--blue-700);
+      width: 100%;
+      box-shadow: none;
+      transition: background 0.15s, transform 0.12s;
+    }
+    button.secondary:hover {
+      background: var(--blue-800);
+      transform: translateY(-1px);
+    }
+    .card-confirm-row {
+      margin-top: 1rem;
+      padding-top: 0.9rem;
+      border-top: 1px dashed rgba(74, 101, 120, 0.22);
+    }
+    .card-confirm-row + .msg {
+      margin-top: 0.65rem;
+    }
+    details.adv {
+      margin-top: 0.95rem;
+      border-top: 1px dashed rgba(74, 101, 120, 0.22);
+      padding-top: 0.85rem;
+    }
+    details.adv summary {
+      cursor: pointer;
+      font-size: 0.86rem;
+      font-weight: 700;
+      font-family: "Nunito", "Noto Sans SC", sans-serif;
+      color: var(--blue-700);
+      user-select: none;
+    }
+    details.adv summary:hover { color: var(--blue-900); }
+    .progress {
+      display: none;
+      align-items: center;
+      gap: 0.55rem;
+      font-size: 0.86rem;
+      color: var(--muted);
+    }
+    .progress.on { display: flex; }
+    .spinner {
+      width: 1.1rem;
+      height: 1.1rem;
+      border: 2px solid rgba(74, 101, 120, 0.15);
+      border-top-color: var(--blue-600);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .msg {
+      margin-top: 0.85rem;
+      padding: 0.65rem 0.9rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.86rem;
+      white-space: pre-wrap;
+      display: none;
+    }
+    .msg.err {
+      background: rgba(248, 242, 242, 0.95);
+      border: 1px solid rgba(180, 120, 120, 0.35);
+      color: #7a3d3d;
+    }
+    .msg.ok {
+      background: rgba(237, 244, 248, 0.95);
+      border: 1px solid rgba(74, 101, 120, 0.28);
+      color: var(--blue-900);
+    }
+
+    code, .pill {
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 0.76rem;
+      background: var(--code-bg);
+      padding: 0.12rem 0.4rem;
+      border-radius: 6px;
+      border: 1px solid rgba(74, 101, 120, 0.2);
+      color: var(--blue-800);
+      word-break: break-all;
+    }
+
+    footer {
+      margin-top: 1.5rem;
+      padding: 0.85rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.65;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(74, 101, 120, 0.16);
+      box-shadow: 0 2px 12px rgba(45, 70, 88, 0.04);
+    }
+    footer code {
+      font-size: 0.82em;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 0.08rem 0.35rem;
+      border-radius: 5px;
+      border: 1px solid rgba(74, 101, 120, 0.18);
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="wrap">
+      <header class="site-head">
+        <div class="brand">
+          <div class="logo" role="img" aria-label="记事本">🗒️</div>
+          <h1>美术统筹表工坊</h1>
+        </div>
+        <p class="tagline">上传已定稿脚本 Excel，即可导出与「美术统筹表范例」版式一致的美术统筹表（.xlsx）。</p>
+      </header>
+    </div>
+
+      <main class="workbench-grid">
+        <aside class="bubble-card card-mint" aria-labelledby="guide-h">
+          <h2 class="card-kicker" id="guide-h"><span class="kicker-emoji" aria-hidden="true">✨</span> 使用指南</h2>
+          <div class="guide-bits">
+            <div class="guide-bit">
+              <span class="bit-tag">方式一 · 工坊</span>
+              <p>默认在<strong>浏览器内直连</strong> OpenAI 兼容接口。布局为三列：<strong>左侧</strong>本说明，<strong>中间</strong>上为 API、下为统筹表头（选填），<strong>右侧</strong>上传已定稿脚本并导出。</p>
+              <p>工坊主要读取脚本单元格的<strong>文字描述</strong>。若统筹表需要内嵌配图，请用方式二在 Cursor 中配合技能导出配图列。</p>
+            </div>
+            <div class="guide-bit">
+              <span class="bit-tag bit-cursor">方式二 · Cursor</span>
+              <p>将 <strong>animation-handoff-xlsx</strong> 技能放到本机 <code>~/.cursor/skills/animation-handoff-xlsx/</code>，确保含 <code>SKILL.md</code> 与 <code>scripts/generate_art_coordination_xlsx.py</code>。重启 Cursor 后，在对话中调用该 SKILL 并附上脚本即可导出统筹表。</p>
+            </div>
+          </div>
+        </aside>
+
+        <div class="col-mid-stack">
+        <section class="bubble-card card-peach" aria-labelledby="sec-llm">
+            <h2 class="card-kicker" id="sec-llm"><span class="kicker-emoji" aria-hidden="true">🤖</span> 浏览器调用 API</h2>
+            <div class="llm-notice">
+              可选 Gemini、OpenAI，或 OpenAI 兼容地址（国内/自建、Claude 网关等）。海外官方接口常被浏览器 <strong>CORS</strong> 拦截；国内是否允许浏览器直连以各平台说明为准，失败请勾选下方「服务端调用模型」，或使用 Cursor 技能。
+            </div>
+            <div class="llm-provider-row">
+              <div class="field" style="margin-bottom:0">
+                <label for="llm_provider">服务商</label>
+                <select id="llm_provider" class="llm-select">
+                  <option value="gemini">Google Gemini</option>
+                  <option value="openai">OpenAI</option>
+                  <option value="compatible">OpenAI 兼容（国内/自建）</option>
+                </select>
+              </div>
+              <div class="field" style="margin-bottom:0" id="llm_model_preset_wrap">
+                <label for="llm_model_select">模型</label>
+                <select id="llm_model_select" class="llm-select"></select>
+              </div>
+            </div>
+            <div class="field" id="llm_model_custom_wrap" style="display:none;margin-top:0.65rem">
+              <label for="llm_model_custom">模型 ID</label>
+              <input id="llm_model_custom" type="text" placeholder="如 gpt-4o、自定义模型名" autocomplete="off" />
+            </div>
+            <div class="field" id="llm_base_custom_wrap" style="display:none">
+              <label for="llm_base_custom">API Base URL</label>
+              <input id="llm_base_custom" type="url" placeholder="https://你的网关/v1" autocomplete="off" />
+            </div>
+            <input type="hidden" id="llm_base" value="https://generativelanguage.googleapis.com/v1beta/openai" />
+            <div class="field" style="margin-bottom:0.5rem">
+              <label for="llm_key" id="llm_key_label">API Key（仅本页内存，刷新即无）</label>
+              <input id="llm_key" type="password" placeholder="Google AI Studio 项目 Key" autocomplete="off" />
+            </div>
+            <label class="llm-opt">
+              <input type="checkbox" id="use_server_llm" />
+              <span>改由<strong>服务端</strong>调用模型（需在终端配置 <code>OPENAI_API_KEY</code>，不经过浏览器直连）</span>
+            </label>
+            <div class="card-confirm-row">
+              <button type="button" class="secondary" id="llm_confirm">确认模型配置</button>
+            </div>
+            <div class="msg err" id="llmConfirmErr" role="status"></div>
+            <div class="msg ok" id="llmConfirmOk" role="status"></div>
+        </section>
+
+          <section class="bubble-card card-sky" aria-labelledby="sec-meta">
+            <h2 class="card-kicker" id="sec-meta"><span class="kicker-emoji" aria-hidden="true">📝</span> 统筹表表头 <span class="muted">选填</span></h2>
+            <p class="sec-hint">会写入导出表顶栏；与脚本内冲突时以脚本为准。</p>
+            <div class="field">
+              <label for="director">编导</label>
+              <input id="director" type="text" placeholder="例如：张三" autocomplete="name" />
+            </div>
+            <div class="field">
+              <label for="script_url">脚本链接</label>
+              <input id="script_url" type="url" placeholder="石墨 / 飞书 文档 URL，无则留空" />
+            </div>
+            <div class="mini-2col" style="margin-top:0.25rem">
+              <div class="field" style="margin:0">
+                <label for="grade">年级</label>
+                <input id="grade" type="text" placeholder="例如：三年级" />
+              </div>
+              <div class="field" style="margin:0">
+                <label for="color_ref">定制互动色彩参考</label>
+                <input id="color_ref" type="text" placeholder="无则留空" />
+              </div>
+            </div>
+            <div class="card-confirm-row">
+              <button type="button" class="secondary" id="meta_confirm">确认表头信息</button>
+            </div>
+            <div class="msg err" id="metaConfirmErr" role="status"></div>
+            <div class="msg ok" id="metaConfirmOk" role="status"></div>
+            <details class="adv">
+              <summary>高级选项 · 工作表与行数</summary>
+              <div class="field" style="margin-top:0.85rem">
+                <label for="sheet_name">仅解析指定工作表</label>
+                <input id="sheet_name" type="text" placeholder="留空 = 全部工作表；须与 Excel 底部标签一致" />
+              </div>
+              <div class="field">
+                <label for="max_rows">每个工作表最多读取行数</label>
+                <input id="max_rows" type="number" min="50" max="2000" value="500" />
+              </div>
+            </details>
+          </section>
+        </div>
+
+          <section class="bubble-card card-upload-hero" aria-labelledby="sec-upload">
+          <h2 class="card-kicker" id="sec-upload"><span class="kicker-emoji" aria-hidden="true">📂</span> 已定稿脚本上传 <span class="muted">.xlsx</span></h2>
+          <p class="upload-hero-lead">请先在中列配置 API、填写表头（选填），再在本列上传脚本并导出。</p>
+          <div class="upload-hero-body">
+            <label class="drop drop--hero" id="drop" tabindex="0">
+              <input class="file-input" id="f" type="file" accept=".xlsx,.xlsm" />
+              <span style="font-size:2rem;line-height:1" aria-hidden="true">📎</span>
+              <p><strong>点击或拖拽</strong> Excel 到此处</p>
+              <p class="fname" id="fname" hidden></p>
+            </label>
+            <div class="upload-hero-side">
+              <div class="actions">
+                <button type="button" class="primary" id="go">导出下载</button>
+                <div class="progress" id="prog">
+                  <div class="spinner"></div>
+                  <span id="progText">正在请求模型，大表可能需要 1～3 分钟…</span>
+                </div>
+              </div>
+              <div class="msg err" id="msgErr"></div>
+              <div class="msg ok" id="msgOk"></div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+    <div class="wrap">
+      <footer>
+        提示：复杂内嵌图建议在本地用 animation-handoff 技能导出列上图后再统筹。导出 .xlsx 依赖服务端 <code>openpyxl</code> 与 <code>GENERATOR_SCRIPT</code>。浏览器直连时请勿在公共电脑保存 API Key。
+      </footer>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const f = $('f');
+    const drop = $('drop');
+    const fname = $('fname');
+    const go = $('go');
+    const prog = $('prog');
+    const progText = $('progText');
+    const msgErr = $('msgErr');
+    const msgOk = $('msgOk');
+
+    const LLM_PRESETS = {
+      gemini: {
+        base: 'https://generativelanguage.googleapis.com/v1beta/openai',
+        models: [
+          { v: 'gemini-2.0-flash', t: 'gemini-2.0-flash' },
+          { v: 'gemini-2.5-flash-preview-05-20', t: 'gemini-2.5-flash-preview' },
+          { v: 'gemini-1.5-flash', t: 'gemini-1.5-flash' },
+          { v: 'gemini-1.5-pro', t: 'gemini-1.5-pro' },
+        ],
+        keyPh: 'Google AI Studio 项目 Key',
+      },
+      openai: {
+        base: 'https://api.openai.com/v1',
+        models: [
+          { v: 'gpt-4o', t: 'gpt-4o' },
+          { v: 'gpt-4o-mini', t: 'gpt-4o-mini' },
+          { v: 'gpt-4-turbo', t: 'gpt-4-turbo' },
+          { v: 'o1-mini', t: 'o1-mini' },
+        ],
+        keyPh: 'OpenAI sk-…',
+      },
+      compatible: {
+        base: '',
+        models: [],
+        keyPh: '按网关 / 平台要求填写',
+        isCustom: true,
+      },
+    };
+
+    function applyLlmProvider() {
+      const p = $('llm_provider').value;
+      const cfg = LLM_PRESETS[p];
+      $('llm_base_custom_wrap').style.display = cfg.isCustom ? 'block' : 'none';
+      $('llm_model_custom_wrap').style.display = cfg.isCustom ? 'block' : 'none';
+      $('llm_model_preset_wrap').style.display = cfg.isCustom ? 'none' : 'block';
+      $('llm_key').placeholder = cfg.keyPh;
+
+      if (cfg.isCustom) {
+        $('llm_base').value = ($('llm_base_custom').value || '').trim();
+      } else {
+        $('llm_base').value = cfg.base;
+        const sel = $('llm_model_select');
+        sel.innerHTML = '';
+        cfg.models.forEach(({ v, t }) => {
+          const o = document.createElement('option');
+          o.value = v;
+          o.textContent = t;
+          sel.appendChild(o);
+        });
+      }
+    }
+
+    function resolvedLlmBase() {
+      if ($('llm_provider').value === 'compatible') {
+        return ($('llm_base_custom').value || '').trim().replace(/\/$/, '');
+      }
+      return ($('llm_base').value || '').trim().replace(/\/$/, '');
+    }
+
+    function resolvedLlmModel() {
+      if ($('llm_provider').value === 'compatible') {
+        return ($('llm_model_custom').value || '').trim();
+      }
+      return ($('llm_model_select').value || '').trim();
+    }
+
+    const llmConfirmErr = $('llmConfirmErr');
+    const llmConfirmOk = $('llmConfirmOk');
+
+    function hideLlmConfirmMsgs() {
+      llmConfirmErr.style.display = 'none';
+      llmConfirmOk.style.display = 'none';
+    }
+
+    function invalidateLlmConfirm() {
+      hideLlmConfirmMsgs();
+    }
+
+    $('llm_provider').addEventListener('change', () => {
+      invalidateLlmConfirm();
+      applyLlmProvider();
+    });
+    $('llm_base_custom').addEventListener('input', () => {
+      invalidateLlmConfirm();
+      if ($('llm_provider').value === 'compatible') {
+        $('llm_base').value = $('llm_base_custom').value.trim();
+      }
+    });
+    $('llm_model_select').addEventListener('change', invalidateLlmConfirm);
+    $('llm_model_custom').addEventListener('input', invalidateLlmConfirm);
+    $('llm_key').addEventListener('input', invalidateLlmConfirm);
+    $('use_server_llm').addEventListener('change', invalidateLlmConfirm);
+    applyLlmProvider();
+
+    $('llm_confirm').addEventListener('click', () => {
+      hideLlmConfirmMsgs();
+      if ($('use_server_llm').checked) {
+        llmConfirmOk.textContent = '已确认：将使用服务端调用模型（请确保终端已配置 OPENAI_API_KEY）。可在中间下方填表头，右侧上传导出。';
+        llmConfirmOk.style.display = 'block';
+        return;
+      }
+      const base = resolvedLlmBase();
+      const model = resolvedLlmModel();
+      const key = ($('llm_key').value || '').trim();
+      if (!base) {
+        llmConfirmErr.textContent = '请填写有效的 API Base URL。';
+        llmConfirmErr.style.display = 'block';
+        return;
+      }
+      if (!model) {
+        llmConfirmErr.textContent = '请选择或填写模型。';
+        llmConfirmErr.style.display = 'block';
+        return;
+      }
+      if (!key) {
+        llmConfirmErr.textContent = '请填写 API Key，或勾选「改由服务端调用模型」。';
+        llmConfirmErr.style.display = 'block';
+        return;
+      }
+      const pLabel = $('llm_provider').selectedOptions[0]?.textContent?.trim() || $('llm_provider').value;
+      llmConfirmOk.textContent = `已确认：${pLabel} · 模型 ${model}。可在中间下方填表头，右侧上传导出。`;
+      llmConfirmOk.style.display = 'block';
+    });
+
+    const metaConfirmErr = $('metaConfirmErr');
+    const metaConfirmOk = $('metaConfirmOk');
+
+    function hideMetaConfirmMsgs() {
+      metaConfirmErr.style.display = 'none';
+      metaConfirmOk.style.display = 'none';
+    }
+
+    function invalidateMetaConfirm() {
+      hideMetaConfirmMsgs();
+    }
+
+    ['director', 'script_url', 'grade', 'color_ref', 'sheet_name', 'max_rows'].forEach((id) => {
+      const el = $(id);
+      el.addEventListener('input', invalidateMetaConfirm);
+      el.addEventListener('change', invalidateMetaConfirm);
+    });
+
+    $('meta_confirm').addEventListener('click', () => {
+      hideMetaConfirmMsgs();
+      const url = $('script_url').value.trim();
+      if (url) {
+        try {
+          new URL(url);
+        } catch {
+          metaConfirmErr.textContent = '脚本链接格式不正确，请填写完整 http(s):// 开头的 URL，或留空。';
+          metaConfirmErr.style.display = 'block';
+          return;
+        }
+      }
+      const bits = [];
+      const director = $('director').value.trim();
+      if (director) bits.push(`编导「${director}」`);
+      if (url) bits.push('脚本链接已填');
+      const g = $('grade').value.trim();
+      if (g) bits.push(`年级「${g}」`);
+      const c = $('color_ref').value.trim();
+      if (c) bits.push('色彩参考已填');
+      let msg = '已确认：';
+      if (bits.length === 0) {
+        msg += '主要表头项未填写，';
+      } else {
+        msg += `${bits.join('，')}；`;
+      }
+      msg += '与脚本冲突时以脚本为准。';
+      const sn = $('sheet_name').value.trim();
+      const mr = Math.min(2000, Math.max(50, parseInt($('max_rows').value, 10) || 500));
+      msg += sn
+        ? ` 高级：仅解析工作表「${sn}」，每表最多 ${mr} 行。`
+        : ` 高级：读取全部工作表，每表最多 ${mr} 行。`;
+      metaConfirmOk.textContent = msg;
+      metaConfirmOk.style.display = 'block';
+    });
+
+    function hideMsgs() {
+      msgErr.style.display = 'none';
+      msgOk.style.display = 'none';
+    }
+
+    function showErr(t) {
+      hideMsgs();
+      msgErr.textContent = t;
+      msgErr.style.display = 'block';
+    }
+
+    function showOk(t) {
+      hideMsgs();
+      msgOk.textContent = t;
+      msgOk.style.display = 'block';
+    }
+
+    function updateFileLabel() {
+      if (f.files?.length) {
+        const file = f.files[0];
+        const mb = (file.size / 1024 / 1024).toFixed(2);
+        fname.textContent = `${file.name} · ${mb} MB`;
+        fname.hidden = false;
+      } else {
+        fname.hidden = true;
+      }
+    }
+
+    f.addEventListener('change', updateFileLabel);
+
+    drop.addEventListener('click', (e) => {
+      if (e.target !== f) f.click();
+    });
+    drop.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); f.click(); }
+    });
+    ['dragenter', 'dragover'].forEach((ev) => {
+      drop.addEventListener(ev, (e) => {
+        e.preventDefault();
+        drop.classList.add('focus');
+      });
+    });
+    ['dragleave', 'drop'].forEach((ev) => {
+      drop.addEventListener(ev, (e) => {
+        e.preventDefault();
+        if (ev === 'drop' && e.dataTransfer.files?.length) {
+          const file = e.dataTransfer.files[0];
+          if (!/\.(xlsx|xlsm)$/i.test(file.name)) {
+            showErr('请上传 .xlsx 或 .xlsm 文件');
+            return;
+          }
+          const dt = new DataTransfer();
+          dt.items.add(file);
+          f.files = dt.files;
+          updateFileLabel();
+          hideMsgs();
+        }
+        drop.classList.remove('focus');
+      });
+    });
+
+    function extractJsonObject(raw) {
+      let s = String(raw).trim();
+      const fence = /^```(?:json)?\s*([\s\S]*?)\s*```$/m.exec(s);
+      if (fence) s = fence[1].trim();
+      try {
+        return JSON.parse(s);
+      } catch (_) {
+        const a = s.indexOf('{');
+        const b = s.lastIndexOf('}');
+        if (a >= 0 && b > a) return JSON.parse(s.slice(a, b + 1));
+        throw new Error('模型返回内容不是合法 JSON');
+      }
+    }
+
+    function workbookToScriptText(workbook, maxRowsPerSheet, sheetFilter) {
+      const parts = [];
+      const want = (sheetFilter || '').trim();
+      const names = want
+        ? workbook.SheetNames.filter((n) => n.trim() === want)
+        : [...workbook.SheetNames];
+      if (want && names.length === 0) {
+        const all = workbook.SheetNames.join('、') || '（无）';
+        throw new Error(`未找到名为「${want}」的工作表。当前：${all}`);
+      }
+      for (const name of names) {
+        const ws = workbook.Sheets[name];
+        if (!ws) continue;
+        parts.push(`## 工作表: ${name}`);
+        const ref = ws['!ref'];
+        if (!ref) continue;
+        const range = XLSX.utils.decode_range(ref);
+        let rowCount = 0;
+        for (let R = range.s.r; R <= range.e.r; R++) {
+          rowCount += 1;
+          if (rowCount > maxRowsPerSheet) {
+            parts.push(`…（本表已截断，仅前 ${maxRowsPerSheet} 行）`);
+            break;
+          }
+          const cells = [];
+          for (let C = range.s.c; C <= range.e.c; C++) {
+            const addr = XLSX.utils.encode_cell({ r: R, c: C });
+            const cell = ws[addr];
+            let v = cell && cell.v != null ? cell.v : '';
+            if (typeof v !== 'string') v = String(v);
+            cells.push(v.replace(/\n/g, ' '));
+          }
+          parts.push(cells.join('\t'));
+        }
+      }
+      return parts.join('\n');
+    }
+
+    function metaHintBlock() {
+      const pairs = [
+        ['编导', $('director').value.trim()],
+        ['脚本链接', $('script_url').value.trim()],
+        ['年级', $('grade').value.trim()],
+        ['定制互动色彩参考', $('color_ref').value.trim()],
+      ].filter(([, v]) => v);
+      if (!pairs.length) return '';
+      const lines = pairs.map(([k, v]) => `${k}：${v}`).join('\n');
+      return '【表头信息】用户已填写下列项，请写入 JSON 的 meta 对应字段；若与脚本表格内信息冲突，以脚本为准。\n' + lines + '\n\n';
+    }
+
+    function mergeMetaHints(data) {
+      const hints = {
+        编导: $('director').value.trim(),
+        脚本链接: $('script_url').value.trim(),
+        年级: $('grade').value.trim(),
+        定制互动色彩参考: $('color_ref').value.trim(),
+      };
+      data.meta = data.meta && typeof data.meta === 'object' ? data.meta : {};
+      Object.entries(hints).forEach(([k, v]) => {
+        if (v) data.meta[k] = v;
+      });
+    }
+
+    async function downloadFromResponse(res) {
+      if (!res.ok) {
+        let t = await res.text();
+        try {
+          const j = JSON.parse(t);
+          t = Array.isArray(j.detail) ? j.detail.map((x) => x.msg || x).join('\n') : (j.detail || t);
+        } catch (_) {}
+        throw new Error(typeof t === 'string' ? t : JSON.stringify(t));
+      }
+      const cd = res.headers.get('Content-Disposition');
+      let downloadName = '美术统筹表.xlsx';
+      if (cd) {
+        const m = /filename\*=UTF-8''([^;]+)|filename="([^"]+)"/i.exec(cd);
+        const raw = m ? (m[1] || m[2]) : null;
+        if (raw) downloadName = decodeURIComponent(raw.replace(/\+/g, ' '));
+      }
+      const blob = await res.blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = downloadName;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      showOk('已保存下载：' + downloadName);
+    }
+
+    go.addEventListener('click', async () => {
+      hideMsgs();
+      if (!f.files?.length) {
+        showErr('请先选择或拖入 Excel 文件');
+        return;
+      }
+      const maxRows = Math.min(2000, Math.max(50, parseInt($('max_rows').value, 10) || 500));
+      const sheetName = $('sheet_name').value.trim();
+      go.disabled = true;
+      prog.classList.add('on');
+
+      try {
+        if ($('use_server_llm').checked) {
+          progText.textContent = '正在上传并由服务端请求模型…';
+          const fd = new FormData();
+          fd.append('file', f.files[0]);
+          fd.append('director', $('director').value.trim());
+          fd.append('script_url', $('script_url').value.trim());
+          fd.append('grade', $('grade').value.trim());
+          fd.append('color_ref', $('color_ref').value.trim());
+          fd.append('sheet_name', sheetName);
+          fd.append('max_rows', String(maxRows));
+          const res = await fetch('/api/convert', { method: 'POST', body: fd });
+          await downloadFromResponse(res);
+          return;
+        }
+
+        if (typeof XLSX === 'undefined') {
+          throw new Error('表格解析库未加载，请检查网络能否访问 jsDelivr');
+        }
+        const key = $('llm_key').value.trim();
+        if (!key) {
+          throw new Error('请填写 API Key，或勾选「改由服务端调用模型」');
+        }
+        const baseRaw = resolvedLlmBase();
+        if (!baseRaw) {
+          throw new Error('请填写 API Base URL（OpenAI 兼容模式）');
+        }
+        const modelId = resolvedLlmModel();
+        if (!modelId) {
+          throw new Error('请选择或填写模型');
+        }
+
+        progText.textContent = '正在读取 Excel…';
+        const ab = await f.files[0].arrayBuffer();
+        const workbook = XLSX.read(ab, { type: 'array' });
+        const scriptText = workbookToScriptText(workbook, maxRows, sheetName);
+
+        progText.textContent = '正在获取提示词…';
+        const pr = await fetch('/api/handoff-system-prompt');
+        if (!pr.ok) throw new Error('无法拉取 /api/handoff-system-prompt');
+        const { prompt: systemPrompt } = await pr.json();
+
+        const chatUrl = `${baseRaw}/chat/completions`;
+        const userContent =
+          metaHintBlock()
+          + '以下为脚本 Excel 导出的制表符分隔文本（含表头）。请生成完整 handoff JSON：\n\n'
+          + scriptText.slice(0, 120000);
+
+        progText.textContent = '浏览器正在直连大模型，大表可能需 1～3 分钟…';
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 300000);
+        let llmRes;
+        try {
+          llmRes = await fetch(chatUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${key}`,
+            },
+            body: JSON.stringify({
+              model: modelId,
+              temperature: 0.2,
+              messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: userContent },
+              ],
+            }),
+            signal: ctrl.signal,
+          });
+        } catch (err) {
+          if (err.name === 'AbortError') {
+            throw new Error('请求模型超时（5 分钟）');
+          }
+          const msg = err.message || String(err);
+          if (/Failed to fetch|NetworkError|load failed/i.test(msg)) {
+            throw new Error(
+              '无法连接模型接口（常见于浏览器 CORS 拦截）。请换用允许跨域的网关 / 中转，或勾选「服务端调用模型」。\n原始错误：' + msg
+            );
+          }
+          throw err;
+        } finally {
+          clearTimeout(timer);
+        }
+
+        if (!llmRes.ok) {
+          const errBody = await llmRes.text();
+          throw new Error(`模型 API ${llmRes.status}：${errBody.slice(0, 1500)}`);
+        }
+        const llmJson = await llmRes.json();
+        const content = llmJson.choices?.[0]?.message?.content;
+        if (!content) {
+          throw new Error('模型响应异常：' + JSON.stringify(llmJson).slice(0, 800));
+        }
+        const handoff = extractJsonObject(content);
+        mergeMetaHints(handoff);
+
+        progText.textContent = '正在生成 .xlsx…';
+        const stem = f.files[0].name.replace(/\.(xlsx|xlsm)$/i, '');
+        const buildRes = await fetch('/api/build-xlsx', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data: handoff, filename_stem: stem }),
+        });
+        await downloadFromResponse(buildRes);
+      } catch (e) {
+        showErr(e.message || String(e));
+      } finally {
+        prog.classList.remove('on');
+        go.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
